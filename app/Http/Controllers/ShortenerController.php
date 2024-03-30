@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\RecordVisitor;
 use App\Models\Shortener;
 use Illuminate\Http\Request;
 
@@ -34,8 +35,12 @@ class ShortenerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Shortener $shortener)
+    public function show(Request $request, Shortener $shortener)
     {
+        $agent = new \Jenssegers\Agent\Agent();
+        $agent->setUserAgent($request->userAgent());
+        RecordVisitor::dispatchSync($shortener, $agent);
+
         return redirect($shortener->original);
     }
 
